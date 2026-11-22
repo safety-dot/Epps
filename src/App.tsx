@@ -130,26 +130,31 @@ function readStoredData<T>(key: string, fallback: T): T {
 }
 
 async function persistSite(site: Site) {
+  if (!supabase) return;
   const { error } = await supabase.from('sedes').insert({ nombre: site.name, direccion: site.address, activo: site.active });
   if (error) console.warn('No se pudo sincronizar la sede.', error.message);
 }
 
 async function persistWorker(worker: Worker) {
+  if (!supabase) return;
   const { error } = await supabase.from('trabajadores').insert({ nombre_completo: worker.name, dni: worker.dni, area: worker.area, puesto: worker.position, sede_id: worker.siteId, talla_casco: worker.sizes.split(' / ')[0], talla_calzado: worker.sizes.split(' / ')[1], activo: worker.active });
   if (error) console.warn('No se pudo sincronizar el trabajador.', error.message);
 }
 
 async function persistWorkers(workers: Worker[]) {
+  if (!supabase) return;
   const { error } = await supabase.from('trabajadores').insert(workers.map((worker) => ({ nombre_completo: worker.name, dni: worker.dni, area: worker.area, puesto: worker.position, sede_id: worker.siteId, talla_casco: worker.sizes.split(' / ')[0], talla_calzado: worker.sizes.split(' / ')[1], activo: worker.active })));
   if (error) console.warn('No se pudo sincronizar la carga masiva.', error.message);
 }
 
 async function updateWorkerRemote(worker: Worker) {
+  if (!supabase) return;
   const { error } = await supabase.from('trabajadores').update({ nombre_completo: worker.name, dni: worker.dni, area: worker.area, sede_id: worker.siteId, activo: worker.active }).eq('dni', worker.dni);
   if (error) console.warn('No se pudo sincronizar la actualización del trabajador.', error.message);
 }
 
 async function deleteWorkerRemote(dni: string) {
+  if (!supabase) return;
   const { error } = await supabase.from('trabajadores').delete().eq('dni', dni);
   if (error) console.warn('No se pudo sincronizar la eliminación del trabajador.', error.message);
 }
